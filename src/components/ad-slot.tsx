@@ -31,7 +31,7 @@ function getAdSlotId(placement: AdPlacement) {
 }
 
 export function AdSlot({
-  label = "精選工具版位",
+  label = "廣告版位",
   compact = false,
   className,
   placement = "content",
@@ -39,6 +39,7 @@ export function AdSlot({
   const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
   const adSlotId = getAdSlotId(placement);
   const isLiveAd = Boolean(adsenseClient && adSlotId);
+  const isInArticleAd = placement === "content";
   const slotClassName = ["ad-slot", compact ? "ad-slot-compact" : "", className]
     .filter(Boolean)
     .join(" ");
@@ -61,18 +62,20 @@ export function AdSlot({
       <aside className={slotClassName} aria-label={label}>
         <ins
           className="adsbygoogle"
+          style={{ display: "block", textAlign: isInArticleAd ? "center" : undefined }}
+          data-ad-layout={isInArticleAd ? "in-article" : undefined}
           data-ad-client={adsenseClient}
           data-ad-slot={adSlotId}
-          data-ad-format="auto"
-          data-full-width-responsive="true"
+          data-ad-format={isInArticleAd ? "fluid" : "auto"}
+          data-full-width-responsive={isInArticleAd ? undefined : "true"}
         />
       </aside>
     );
   }
 
   const helperText = adsenseClient
-    ? "已設定 AdSense publisher id，等待對應廣告單元 slot id 後即可投放。"
-    : "保留給工具推薦、合作揭露或自家產品 CTA，不顯示未核准廣告。";
+    ? "已設定 AdSense publisher id，這個版位仍缺少對應的 slot id。"
+    : "保留給工具推薦、合作揭露或自家產品 CTA；未設定 AdSense 前不會載入廣告。";
 
   return (
     <aside className={slotClassName}>
