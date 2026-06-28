@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FlowKit AI 工作流模板庫
 
-## Getting Started
+繁體中文 AI 自動化工作流內容站 MVP。主題聚焦 n8n、Make、Zapier、ChatGPT、Google Sheets、Gmail、Notion、LINE 的長尾 SEO 工作流、工具筆記與比較頁。
 
-First, run the development server:
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+本機預設網址：
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```txt
+http://127.0.0.1:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Checks
 
-## Learn More
+```bash
+npm run content:check
+npm run lint
+npm run typecheck
+npm run production:check
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+`content:check` 會驗證 slug、必要欄位、工具/分類/相關工作流引用、日期格式與 sitemap 路由數量。
+`production:check` 會檢查正式網址、GA、Search Console、AdSense client/slot 與必要正式頁面是否就緒。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+部署時設定：
 
-## Deploy on Vercel
+```txt
+NEXT_PUBLIC_SITE_URL=https://your-domain.example
+NEXT_PUBLIC_GA_ID=G-...
+NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=...
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+選填：
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```txt
+NEXT_PUBLIC_ADSENSE_CLIENT=ca-pub-...
+NEXT_PUBLIC_ADSENSE_SLOT_CONTENT=...
+NEXT_PUBLIC_ADSENSE_SLOT_LIST=...
+NEXT_PUBLIC_ADSENSE_SLOT_SIDEBAR=...
+```
+
+沒有 `NEXT_PUBLIC_ADSENSE_CLIENT` 時，網站只會顯示內建廣告/合作版位占位，不會載入未核准廣告。
+如果沒有設定 `NEXT_PUBLIC_SITE_URL`，Vercel 預覽部署會使用 `VERCEL_URL` 產生 canonical 與 sitemap；正式網域上線後仍建議明確設定 `NEXT_PUBLIC_SITE_URL`。
+
+## Deployment Checklist
+
+- 在 Vercel 設定 `NEXT_PUBLIC_SITE_URL` 為正式網域。
+- 綁定自有網域並確認 `/sitemap.xml`、`/robots.txt` 可讀。
+- 到 Google Search Console 提交 sitemap。
+- 有核准的 AdSense publisher id 後再設定 `NEXT_PUBLIC_ADSENSE_CLIENT`。
+- 建立 AdSense 廣告單元後，分別填入 content、list、sidebar 三個 slot id。
+- 設定 `NEXT_PUBLIC_ADSENSE_CLIENT` 後確認 `/ads.txt` 會輸出 Google AdSense 記錄。
+- 若要追蹤流量，設定 `NEXT_PUBLIC_GA_ID`。
+- 若要用 meta tag 驗證 Search Console，設定 `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`。
+- 正式放 affiliate 或合作連結時，在頁面或關於頁保留清楚揭露。
+- 部署前依序執行 `npm run content:check`、`npm run production:check`、`npm run lint`、`npm run typecheck`、`npm run build`。
+
+## Ad Placements
+
+目前已預留以下版位：
+
+- 首頁：精選工作流後、工具區後。
+- 列表頁：工作流、工具、分類、比較頁的主要內容前。
+- 詳情頁：工作流/工具/比較文章正文中段。
+- 側欄：工作流、工具、比較詳情頁的桌機 sticky 推薦版位。
+
+三種 AdSense slot 對應：
+
+- `NEXT_PUBLIC_ADSENSE_SLOT_CONTENT`：文章正文中段。
+- `NEXT_PUBLIC_ADSENSE_SLOT_LIST`：首頁與列表頁內容區。
+- `NEXT_PUBLIC_ADSENSE_SLOT_SIDEBAR`：詳情頁側欄。
+
+## Formal Pages
+
+正式站已包含：
+
+- `/privacy`：隱私權政策。
+- `/terms`：使用條款。
+- `/disclosure`：合作與廣告揭露。
+- `/ads.txt`：AdSense publisher id 設定後自動輸出授權銷售商記錄。
+
+## Content
+
+主要內容位於 `src/content/data.ts`，型別位於 `src/content/types.ts`。v1 採手動匯入，不接 AI API、不做登入、不接資料庫。
