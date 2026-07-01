@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { AdSenseScript } from "@/components/adsense-script";
 import { Analytics } from "@/components/analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -18,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 const googleSiteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
+const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -54,9 +54,17 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       data-scroll-behavior="smooth"
     >
+      <head>
+        {adsenseClient ? (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+            crossOrigin="anonymous"
+          />
+        ) : null}
+      </head>
       <body className="min-h-full">
         <Analytics />
-        <AdSenseScript />
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />
